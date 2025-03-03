@@ -9,6 +9,5 @@ int main(){
 	double x3 = pow(x, 4);	
 	printf("%.2lf %.2lf %.2lf", x1, x2, x3);	
 	return 0;
-
 }
 
