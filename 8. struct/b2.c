@@ -2,80 +2,141 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct danhSachSinhVien{
+typedef struct danhSachSinhVien{
 	char hoTen[50];
 	int tuoi;
 	double dtb;
-	struct SinhVien* next;
-};
+	struct danhSachSinhVien* next;
+}dssv;
 
-typedef struct danhSachSinhVien ds;
-
-ds* nhap(ds* a){
-	ds* sinhvien = (ds*)malloc(sizeof(ds))*;
-	printf("Nhap ho va ten: ");
-	gets(a->hoTen);
-	printf("Nhap tuoi: ");
-	scanf("%d", &a->tuoi);
-	printf("Nhap diem trung binh: ");
-	scanf("%lf", &a->dtb);
+dssv* tao(char* hoTen, int tuoi, double dtb) {
+    dssv* sv = (dssv*)malloc(sizeof(dssv));
+    strcpy(sv->hoTen, hoTen);
+    sv->tuoi = tuoi;
+    sv->dtb = dtb;
+    sv->next = NULL;
+    return sv;
 }
 
-void them(ds** a, char hoTen[], int tuoi, double dtb) {
-    ds* sv = nhap();
-    if (*a == NULL) {
-        *a = sv;
+void them(dssv** head, char* hoTen, int tuoi, double dtb) {
+    dssv* svMoi = tao(hoTen, tuoi, dtb);
+    if (*head == NULL) {
+        *head = svMoi;
         return;
     }
-    ds* tmp = *a;
+
+    dssv* tmp = *head;
     while (tmp->next != NULL) {
         tmp = tmp->next;
     }
-    temp->next = sv;
+    tmp->next = svMoi;
 }
 
-void in(ds* a){
-	printf("\nDANH SACH SINH VIEN");
-	printf("\nSTT \t Ho ten \t Tuoi \t Diem TB");
-	printf("\n%s %d %.2lf");
+void chen(dssv** head, char* hoTenMoi, int tuoiMoi, double dtbm, char* tenCanChenTruoc) {
+    dssv* svMoi = tao(hoTenMoi, tuoiMoi, dtbm);
+    if (*head == NULL || strcmp((*head)->hoTen, tenCanChenTruoc) == 0) {
+        svMoi->next = *head;
+        *head = svMoi;
+        return;
+    }
+    dssv* tmp = *head;
+    while (tmp->next != NULL && strcmp(tmp->next->hoTen, tenCanChenTruoc) != 0) {
+        tmp = tmp->next;
+    }
+    if (tmp->next != NULL) {
+        svMoi->next = tmp->next;
+        tmp->next = svMoi;
+    } else {
+        printf("Khong tim thay sinh vien %s trong danh sach!\n", tenCanChenTruoc);
+        free(svMoi);
+    }
 }
 
-void chen(ds** a, char tenCanChenTruoc[], char hoTen[], int tuoi, double dtb) {
+void xoa(dssv** head, char* hoTen) {
+    dssv* tmp = *head, *prev = NULL;
+
+    if (tmp != NULL && strcmp(tmp->hoTen, hoTen) == 0) {
+        *head = tmp->next;
+        free(tmp);
+        return;
+    }
+    while (tmp != NULL && strcmp(tmp->hoTen, hoTen) != 0) {
+        prev = tmp;
+        tmp = tmp->next;
+    }
+    if (tmp == NULL) return;
+    prev->next = tmp->next;
+    free(tmp);
+}
+
+void in(dssv* head){
+	while(head != NULL){
+		printf("\nDANH SACH SINH VIEN");
+		printf("\n%-5s %-20s %-5s %-10s\n", "STT", "Ho ten", "Tuoi", "Diem TB");
+		int stt = 1;
+		printf("%-5d %-20s %-5d %-10.2f\n", stt++, head->hoTen, head->tuoi, head->dtb);
+		head = head->next;
+	}
 }
 
 int main() {
-	ds* danhSach = NULL;
-    int chon;
+	dssv* head = NULL;
     char hoTen[50], tenCanChenTruoc[50], tenCanXoa[50];
     int tuoi;
-    double diemTB;
+    double dtb;
+    int chon;
 	do {
         printf("\nMENU:");
         printf("\n1. Them sinh vien");
-        printf("\n2. Hien thi danh sach sinh vien");
-        printf("\n3. Chen sinh vien vao truoc sinh vien nao do");
-        printf("\n4. Xóa sinh viên");
-        printf("\n5. Thoát");
-        printf("\nCh?n thao tác: ");
+        printf("\n2. Chen sinh vien vao truoc sinh vien nao ");
+        printf("\n3. Xoa sinh vien");
+        printf("\n4. Hien thi danh sach sinh vien");
+        printf("\n5. Thoat");
+        printf("\nChon thao tac: ");
         scanf("%d", &chon);
         getchar();
         switch (chon) {
         	case 1:
-        		
-        	case 2:
-        		in(danhSach);
-        		break;
-        	case 3:
-        		
-        	case 4:
-        		
-        	case 5:
-        		printf("Thoát chuong trình.\n");
+                printf("Nhap ho ten sinh vien: ");
+                fgets(hoTen, sizeof(hoTen), stdin);
+                hoTen[strcspn(hoTen, "\n")] = '\0';
+                printf("Nhap tuoi: ");
+                scanf("%d", &tuoi);
+                printf("Nhap diem trung binh: ");
+                scanf("%lf", &dtb);
+                getchar();
+                them(&head, hoTen, tuoi, dtb);
+                break;
+            case 2:
+                printf("Nhap ho ten sinh vien moi: ");
+                fgets(hoTen, sizeof(hoTen), stdin);
+                hoTen[strcspn(hoTen, "\n")] = '\0';
+                printf("Nhap tuoi: ");
+                scanf("%d", &tuoi);
+                printf("Nhap diem trung binh: ");
+                scanf("%f", &dtb);
+                getchar();
+                printf("Nhap ten sinh vien truoc do de chen vao truoc: ");
+                fgets(tenCanChenTruoc, sizeof(tenCanChenTruoc), stdin);
+                tenCanChenTruoc[strcspn(tenCanChenTruoc, "\n")] = '\0';
+                chen(&head, hoTen, tuoi, dtb, tenCanChenTruoc);
+                break;
+            case 3:
+                printf("Nhap ho ten sinh vien can xoa: ");
+                fgets(hoTen, sizeof(hoTen), stdin);
+                hoTen[strcspn(hoTen, "\n")] = '\0';
+                xoa(&head, hoTen);
+                in(head);
+                break;
+            case 4:
+                in(head);
+                break;
+            case 5:
+                printf("Thoat chuong trinh.\n");
                 break;
             default:
-                printf("L?a ch?n không h?p l?! Vui lòng nh?p l?i.\n");
+                printf("Lua chon khong hop le!\n");
         }
-    }
-	while(chon != 5);
+    } while(chon != 5);
 	return 0;
 }
