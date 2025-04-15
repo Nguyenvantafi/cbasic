@@ -47,7 +47,7 @@ void chen(dssv** head, char* hoTenMoi, int tuoiMoi, double dtbm, char* tenCanChe
         svMoi->next = tmp->next;
         tmp->next = svMoi;
     } else {
-        printf("Khong tim thay sinh vien %s trong danh sach!\n", tenCanChenTruoc);
+        printf("Khong tim thay sinh vien %s trong danh sach\n", tenCanChenTruoc);
         free(svMoi);
     }
 }
@@ -135,7 +135,7 @@ int main() {
                 printf("Thoat chuong trinh.\n");
                 break;
             default:
-                printf("Lua chon khong hop le!\n");
+                printf("Lua chon khong hop le\n");
         }
     } while(chon != 5);
 	return 0;
